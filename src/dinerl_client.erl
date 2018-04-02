@@ -50,10 +50,10 @@ method_name(scan) ->
 
 -spec api(awsv4:credentials(), zone(), aws_datetime(), method(), any(), undefined | integer()) -> result().
 api(Credentials, Zone, ISODate, Name, Body, Timeout) ->
-    case dynamodb:call(Credentials, Zone, method_name(Name),
-                       ISODate, dmochijson2:encode(Body), Timeout) of
+    ocase dynamodb:call(Credentials, Zone, method_name(Name),
+                       ISODate, jiffy:encode(jiffy_mochijson_bridge:mochijson_to_jiffy(Body)), Timeout) of
         {ok, Response} ->
-            {ok, dmochijson2:decode(Response)};
+            {ok, jiffy_mochijson_bridge:jiffy_to_mochijson(jiffy:decode(Response))};
         {error, Code, Reason} ->
             {error, Code, Reason}
     end.
